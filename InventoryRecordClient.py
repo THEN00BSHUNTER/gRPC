@@ -1,8 +1,14 @@
+import os
+from dotenv import load_dotenv
+
 import grpc
 import generated_files.InventoryRecord_pb2_grpc as InventoryRecord_pb2_grpc
 from generated_files import InventoryRecord_pb2
 
-channel = grpc.insecure_channel('localhost:50051')
+load_dotenv()
+port = os.getenv('PRIVATE_IP_SERVER') + ":50051"
+print(port)
+channel = grpc.insecure_channel(port)
 stub = InventoryRecord_pb2_grpc.InventoryRecordServiceStub(channel)
 
 # Test getInventoryRecordById

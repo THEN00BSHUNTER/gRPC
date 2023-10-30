@@ -181,7 +181,9 @@ def serve():
     InventoryRecord_pb2_grpc.add_InventoryRecordServiceServicer_to_server(
         InventoryRecordServer(), server
     )
-    server.add_insecure_port(os.getenv('PRIVATE_IP_SERVER') + ":50051")
+    port = os.getenv('PRIVATE_IP_SERVER') + ":50051"
+    print(port)
+    server.add_insecure_port(port)
     server.start()
     server.wait_for_termination()
 
