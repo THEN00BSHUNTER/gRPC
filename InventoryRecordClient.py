@@ -108,6 +108,3 @@ def getDistribution(percentile=0.5, print_response=False):
     if print_response:
         print(response)
     return total_time
-
-
-getDistribution(0.5, True)
