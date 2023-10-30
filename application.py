@@ -1,18 +1,19 @@
-import os
-
+import asyncio
 import grpc
 import pandas as pd
-from dotenv import load_dotenv
 
+from aiohttp import web
+from grpc.experimental.aio import init_grpc_aio
 import DataProcessing
 from generated_files import InventoryRecord_pb2_grpc
 from concurrent import futures
 from generated_files import InventoryRecord_pb2
+from generated_files.InventoryRecord_pb2_grpc import add_InventoryRecordServiceServicer_to_server
 
 
 class InventoryRecordServer(InventoryRecord_pb2_grpc.InventoryRecordServiceServicer):
     def __init__(self):
-        pass
+        print("Initializing InventoryRecordServer")
 
     def loadInventoryRecords(self):
         # load csv records from InvRecords.csv
@@ -176,16 +177,76 @@ class InventoryRecordServer(InventoryRecord_pb2_grpc.InventoryRecordServiceServi
         return response
 
 
-def serve():
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
-    InventoryRecord_pb2_grpc.add_InventoryRecordServiceServicer_to_server(
-        InventoryRecordServer(), server
-    )
-    server.add_insecure_port(os.getenv('PRIVATE_IP_SERVER') + ":50051")
-    server.start()
-    server.wait_for_termination()
+# def serve():
+#     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+#     InventoryRecord_pb2_grpc.add_InventoryRecordServiceServicer_to_server(
+#         InventoryRecordServer(), server
+#     )
+#     server.add_insecure_port("[::]:50051")
+#     server.start()
+#     server.wait_for_termination()
+#
+#
+# if __name__ == "__main__":
+#     serve()
 
 
-if __name__ == "__main__":
-    load_dotenv()
-    serve()
+# NEW STUFF _________________________________________________________________
+
+class HelloWorldView(web.View):
+    async def get(self):
+        return web.Response(text="Hello World!")
+
+
+class Application(web.Application):
+    def __init__(self):
+        super().__init__()
+        self.grpc_task = None
+        self.grpc_server = GrpcServer()
+        self.add_routes()
+        self.on_startup.append(self.__on_startup())
+        self.on_shutdown.append(self.__on_shutdown())
+
+    def __on_startup(self):
+        async def _on_startup(app):
+            self.grpc_task = \
+                asyncio.ensure_future(app.grpc_server.start())
+
+        return _on_startup
+
+    def __on_shutdown(self):
+        async def _on_shutdown(app):
+            await app.grpc_server.stop()
+            app.grpc_task.cancel()
+            await app.grpc_task
+
+        return _on_shutdown
+
+    def add_routes(self):
+        self.router.add_view('/helloworld', HelloWorldView)
+
+    def run(self):
+        return web.run_app(self, port=8000)
+
+
+class GrpcServer:
+    def __init__(self):
+        init_grpc_aio()
+        self.server = grpc.experimental.aio.server()
+        self.servicer = InventoryRecordServer()
+        add_InventoryRecordServiceServicer_to_server(self.servicer, self.server)
+        self.server.add_insecure_port("[::]:50050")
+
+    async def start(self):
+        print('Server is Running')
+        await self.server.start()
+        await self.server.wait_for_termination()
+
+    async def stop(self):
+        await self.servicer.close()
+        await self.server.wait_for_termination()
+
+
+application = Application()
+if __name__ == '__main__':
+    application.run()
