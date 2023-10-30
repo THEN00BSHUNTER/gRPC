@@ -182,7 +182,6 @@ def serve():
         InventoryRecordServer(), server
     )
     port = os.getenv('PRIVATE_IP_SERVER') + ":50051"
-    print(port)
     server.add_insecure_port(port)
     server.start()
     server.wait_for_termination()

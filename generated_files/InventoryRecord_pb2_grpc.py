@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from . import InventoryRecord_pb2 as InventoryRecord__pb2
+import InventoryRecord_pb2 as InventoryRecord__pb2
 
 
 class InventoryRecordServiceStub(object):
@@ -32,7 +32,7 @@ class InventoryRecordServiceStub(object):
         self.getDistribution = channel.unary_unary(
                 '/InventoryRecordService/getDistribution',
                 request_serializer=InventoryRecord__pb2.GetDistribution.SerializeToString,
-                response_deserializer=InventoryRecord__pb2.InventoryRecordResponseList.FromString,
+                response_deserializer=InventoryRecord__pb2.InventoryAtPercentile.FromString,
                 )
         self.updateInventoryRecord = channel.unary_unary(
                 '/InventoryRecordService/updateInventoryRecord',
@@ -100,7 +100,7 @@ def add_InventoryRecordServiceServicer_to_server(servicer, server):
             'getDistribution': grpc.unary_unary_rpc_method_handler(
                     servicer.getDistribution,
                     request_deserializer=InventoryRecord__pb2.GetDistribution.FromString,
-                    response_serializer=InventoryRecord__pb2.InventoryRecordResponseList.SerializeToString,
+                    response_serializer=InventoryRecord__pb2.InventoryAtPercentile.SerializeToString,
             ),
             'updateInventoryRecord': grpc.unary_unary_rpc_method_handler(
                     servicer.updateInventoryRecord,
@@ -181,7 +181,7 @@ class InventoryRecordService(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/InventoryRecordService/getDistribution',
             InventoryRecord__pb2.GetDistribution.SerializeToString,
-            InventoryRecord__pb2.InventoryRecordResponseList.FromString,
+            InventoryRecord__pb2.InventoryAtPercentile.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 

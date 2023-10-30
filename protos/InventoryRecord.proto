@@ -14,7 +14,7 @@ service InventoryRecordService {
   //Create a rpc method to get the inventory record by searching key value pair for range
   rpc getInventoryRecordByKeyValueRange (InventoryRecordSearchRange) returns (InventoryRecordResponseList) {}
   //Create a rpc method to get distribution in double for a key name and percentile
-  rpc getDistribution (GetDistribution) returns (InventoryRecordResponseList) {}
+  rpc getDistribution (GetDistribution) returns (InventoryAtPercentile) {}
   //Create a rpc method to update a record an return boolean
   rpc updateInventoryRecord (UpdateInventoryRecord) returns (InventoryRecordResponse) {}
 }
