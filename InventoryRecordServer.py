@@ -126,7 +126,7 @@ class InventoryRecordServer(InventoryRecord_pb2_grpc.InventoryRecordServiceServi
             response = records_list
             print(
                 "Returning response for " + request.key_name + " = " + request.key_name + " in range: "
-                + request.key_value_min + " to " + request.key_value_max)
+                + str(request.key_value_min) + " to " + str(request.key_value_max))
             return response
 
     def getDistribution(self, request, context):
