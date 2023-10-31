@@ -25,9 +25,9 @@ class InventoryRecordSearchRange(_message.Message):
     KEY_VALUE_MIN_FIELD_NUMBER: _ClassVar[int]
     KEY_VALUE_MAX_FIELD_NUMBER: _ClassVar[int]
     key_name: str
-    key_value_min: str
-    key_value_max: str
-    def __init__(self, key_name: _Optional[str] = ..., key_value_min: _Optional[str] = ..., key_value_max: _Optional[str] = ...) -> None: ...
+    key_value_min: float
+    key_value_max: float
+    def __init__(self, key_name: _Optional[str] = ..., key_value_min: _Optional[float] = ..., key_value_max: _Optional[float] = ...) -> None: ...
 
 class GetDistribution(_message.Message):
     __slots__ = ["key_name", "percentile"]

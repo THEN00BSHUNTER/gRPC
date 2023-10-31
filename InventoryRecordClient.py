@@ -21,7 +21,7 @@ def createConnection():
 
 
 def updateInventoryRecord(id, name, description, unitPrice, quantityInStock, inveneotryValue, reorderLevel,
-                          reorderTimeInDays, quantityInReorder, discontinued, print_response=False):
+                          reorderTimeInDays, quantityInReorder, discontinued, print_response):
     """
     Updates an inventory record on server csv
     :param id:
@@ -73,9 +73,10 @@ def getInventoryRecordById(id, print_response=False):
     return total_time
 
 
-def getInventoryRecordByKeyValueRange(key_value_min, key_value_max, print_response=False):
+def getInventoryRecordByKeyValueRange(key_name, key_value_min, key_value_max, print_response):
     """
     Gets an inventory record by key value range from server csv
+    :param key_name:
     :param key_value_min:
     :param key_value_max:
     :param print_response:
@@ -84,7 +85,8 @@ def getInventoryRecordByKeyValueRange(key_value_min, key_value_max, print_respon
     start_time = time.monotonic()
     stub = createConnection()
     response = stub.getInventoryRecordByKeyValueRange(
-        InventoryRecord_pb2.InventoryRecordSearchRange(key_value_min, key_value_max, key_name="quantityInStock"))
+        InventoryRecord_pb2.InventoryRecordSearchRange(key_name=key_name, key_value_min=key_value_min,
+                                                       key_value_max=key_value_max))
     total_time = time.monotonic() - start_time
 
     if print_response:
@@ -92,7 +94,7 @@ def getInventoryRecordByKeyValueRange(key_value_min, key_value_max, print_respon
     return total_time
 
 
-def getDistribution(percentile=0.5, print_response=False):
+def getDistribution(key_name, percentile, print_response):
     """
     Get the value at percentile of a key from server csv
     :param percentile:
@@ -102,7 +104,7 @@ def getDistribution(percentile=0.5, print_response=False):
     start_time = time.monotonic()
     stub = createConnection()
     response = stub.getDistribution(
-        InventoryRecord_pb2.GetDistribution(key_name="quantityInStock", percentile=percentile))
+        InventoryRecord_pb2.GetDistribution(key_name=key_name, percentile=percentile))
     total_time = time.monotonic() - start_time
 
     if print_response:
