@@ -1,3 +1,5 @@
 .env
 application.py
 **/__pycache__/
+**/plots/
+```
